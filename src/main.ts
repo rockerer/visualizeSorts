@@ -207,8 +207,56 @@ class Mergesort extends BaseSort {
         this.initRandomList(count);
     }
 
+    /**
+     *  This private function merges to list, which are next to each
+     * other: e0 + 1 = i1
+     * @param i0 beginning of first list
+     * @param e0 end of first list
+     * @param i1 beginning of second list
+     * @param e1 end of seconf list
+     * 
+     * time : O(list.length)
+     * space : O(list.length)
+     */
+    private merge(i0: number, e0: number, i1: number, e1: number): void {
+        // out of space array 
+        let res :Array<number> = [];
+
+        let orig : number = i0;
+
+        while (i0 < e1 && i1 < e1) {
+            if (this.list[i0] < this.list[i1]) {
+                res.push(this.list[i0++]);
+            } else {
+                res.push(this.list[i1++]);
+            }
+        }
+        while(i0 < e0)
+        {
+            res.push(this.list[i0++]);
+        }
+        while(i1 < e1)
+        {
+            res.push(this.list[i1++]);
+        }
+
+        // copy values
+        for (let i = orig; i < res.length; i++) {
+            this.list[orig + i] = res[i];
+        }
+    }
+
+    internMergesort(begin : number, end : number) : void{
+        if (begin == end) {
+            return;
+        }
+        let pivot : number = begin + Math.floor((end - begin) / 2.);
+        this.merge(begin, pivot, pivot+1, end);
+
+    }
+
     sort(): void {
-        throw new Error("Method not implemented.");
+        this.internMergesort(0, this.list.length);
     }
 
 }
