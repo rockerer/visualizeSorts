@@ -9,6 +9,9 @@ abstract class BaseSort {
     // list of numbers which get sorted
     list : Array<number>;
 
+    blockWidth: number = 0;
+    blockHeight: number = 0;
+
     /**
      * Each function has to implement its own render
      * function, as it depends on the algorith, what
@@ -90,9 +93,6 @@ abstract class BaseSort {
 
 class Bubblesort extends BaseSort {
 
-    private blockWidth : number;
-    private blockHeight : number;
-
     constructor(protected count : number) {
         super();
         this.start(count);
@@ -148,8 +148,6 @@ class Bubblesort extends BaseSort {
 
 class Bogosort extends BaseSort {
     private elemCount : number = 0;
-    private blockWidth : number;
-    private blockHeight : number;
     private tries : number = 0;
 
     constructor(count : number) {
@@ -188,6 +186,29 @@ class Bogosort extends BaseSort {
 
     start(count : number) {
         this.initRandomList(count);
+    }
+
+}
+
+class Mergesort extends BaseSort {
+    constructor(protected count : number) {
+        super();
+        this.start(count);
+        this.blockWidth = Math.floor(canvWidth / count);
+        this.blockHeight = Math.floor(canvHeight / count);
+        this.disableButtons();
+    }
+
+    render(...arg: any[]): void {
+        throw new Error("Method not implemented.");
+    }
+
+    start(count: number): void {
+        this.initRandomList(count);
+    }
+
+    sort(): void {
+        throw new Error("Method not implemented.");
     }
 
 }
