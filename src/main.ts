@@ -3,6 +3,12 @@ let canvHeight : number, canvWidth : number;
 
 abstract class BaseSort {
 
+    // Array of buttons, get them form the html-page
+    btnArray : Array<HTMLButtonElement> = [];
+
+    // list of numbers which get sorted
+    list : Array<number>;
+
     /**
      * Each function has to implement its own render
      * function, as it depends on the algorith, what
@@ -13,6 +19,29 @@ abstract class BaseSort {
     abstract start(count : number) : void;
 
     abstract sort() :void;
+
+    constructor() {
+        console.log('Constructor called');
+        
+        let btnCollection : HTMLCollection= document.getElementById('buttons').children;
+        console.log(btnCollection.length);
+        for( let i: number = 0; i < btnCollection.length; i++) {
+            // console.log(btnCollection[i].innerHTML);
+            this.btnArray.push(<HTMLButtonElement>btnCollection[i]);
+        }
+    }
+
+    disableButtons() : void {
+        this.btnArray.forEach((elem) => {
+            elem.disabled = true;
+        });
+    }
+
+    enableButtons() : void {
+        this.btnArray.forEach((elem) => {
+            elem.disabled = false;
+        });
+    }
 
     delay(ms : number) :Promise<unknown> {
         return new Promise( resolve => setTimeout(resolve, ms));
@@ -57,8 +86,6 @@ abstract class BaseSort {
             console.log(this.list[i]);
         }
     }
-
-    list : Array<number>;
 }
 
 class Bubblesort extends BaseSort {
@@ -71,6 +98,7 @@ class Bubblesort extends BaseSort {
         this.start(count);
         this.blockWidth = Math.floor(canvWidth / count);
         this.blockHeight = Math.floor(canvHeight / count);
+        this.disableButtons();
     }
 
     render(finished : number, active : number) : void {
@@ -81,12 +109,12 @@ class Bubblesort extends BaseSort {
             } else {
                 canv.fillStyle = "#000000";
             }
-            canv.fillRect(i * this.blockWidth, canvHeight, this.blockWidth, -1 * this.list[i] * this.blockHeight);
+            canv.fillRect(i * this.blockWidth + 1, canvHeight, this.blockWidth - 2, -1 * this.list[i] * this.blockHeight);
         }
 
         canv.fillStyle = "#00ff00";
         for(let i : number = finished; i < this.list.length; i++) {
-            canv.fillRect(i * this.blockWidth, canvHeight, this.blockWidth, -1 * this.list[i] * this.blockHeight);
+            canv.fillRect(i * this.blockWidth + 1, canvHeight, this.blockWidth - 2, -1 * this.list[i] * this.blockHeight);
         }
     }
 
@@ -110,6 +138,7 @@ class Bubblesort extends BaseSort {
             // premature exit
             if(!didSomething) {
                 this.render(0, -1);
+                this.enableButtons();
                 return;
             }
         }
@@ -121,12 +150,14 @@ class Bogosort extends BaseSort {
     private elemCount : number = 0;
     private blockWidth : number;
     private blockHeight : number;
+    private tries : number = 0;
 
     constructor(count : number) {
         super();
         this.start(count);
         this.blockWidth = Math.floor(canvWidth / count);
         this.blockHeight = Math.floor(canvHeight / count);
+        this.disableButtons();
     }
 
     render(finished: boolean): void {
@@ -138,7 +169,7 @@ class Bogosort extends BaseSort {
             canv.fillStyle = "#ff0000";
         }
         for (let i: number = 0; i < this.list.length; i++) {
-            canv.fillRect(i * this.blockWidth, canvHeight, this.blockWidth, -1 * this.list[i] * this.blockHeight);
+            canv.fillRect(i * this.blockWidth + 1, canvHeight, this.blockWidth - 2, -1 * this.list[i] * this.blockHeight);
         }
     }
 
@@ -146,9 +177,12 @@ class Bogosort extends BaseSort {
         while (!this.isSorted()) {
             this.shuffleList();
             this.render(false);
-            await this.delay(50);
+            this.tries++;
+            await this.delay(2);
         }
         this.render(true);
+        console.log(this.tries);
+        this.enableButtons();
         return;
     }
 
@@ -167,18 +201,20 @@ function init() {
 //    testCanvas();
 
     // testBubblesort();
-    testBogosort();
+    // testBogosort();
 
 //    Bogosort(shuffle([...Array(10).keys()]));
 }
 
-function testBubblesort() : void {
-    let b : Bubblesort = new Bubblesort(50);
+function testBubblesort(): void {
+    // let btn1 : HTMLButtonElement = document.getElementById('buttons').children[0];
+    // btn1.disabled = true;
+    let b: Bubblesort = new Bubblesort(25);
     b.printList();
     b.sort();
 }
-function testBogosort() : void {
-    let b : Bogosort = new Bogosort(4);
+function testBogosort(): void {
+    let b: Bogosort = new Bogosort(8);
     b.printList();
     b.sort();
 }
