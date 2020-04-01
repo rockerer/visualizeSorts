@@ -107,7 +107,7 @@ class Bubblesort extends BaseSort {
             if(i == active) {
                 canv.fillStyle = "#0000ff";
             } else {
-                canv.fillStyle = "#000000";
+                canv.fillStyle = "#ffffff";
             }
             canv.fillRect(i * this.blockWidth + 1, canvHeight, this.blockWidth - 2, -1 * this.list[i] * this.blockHeight);
         }
@@ -199,8 +199,36 @@ class Mergesort extends BaseSort {
         this.disableButtons();
     }
 
-    render(...arg: any[]): void {
-        throw new Error("Method not implemented.");
+
+
+    render(begin: number, end: number, i0: number, i1: number, finished: boolean): void {
+        canv.clearRect(0, 0, canvWidth, canvHeight);
+        if (finished) {
+            canv.fillStyle = "#00ff00";
+            for (let i: number = 0; i < this.list.length; i++) {
+                canv.fillRect(i * this.blockWidth + 1, canvHeight, this.blockWidth - 2, -1 * this.list[i] * this.blockHeight);
+            }
+            return;
+        }
+        else {
+            canv.fillStyle = "#ff0000";
+            for (let i: number = 0; i < begin; i++) {
+                canv.fillRect(i * this.blockWidth + 1, canvHeight, this.blockWidth - 2, -1 * this.list[i] * this.blockHeight);
+            }
+            for (let i: number = begin; i < end; i++) {
+                if ( i == i0 || i == i1) {
+                    canv.fillStyle = "#0000ff";
+                } else {
+                    canv.fillStyle = "#ff00ff";
+                }
+                canv.fillRect(i * this.blockWidth + 1, canvHeight, this.blockWidth - 2, -1 * this.list[i] * this.blockHeight);
+            }
+            canv.fillStyle = "#ff0000";
+            for (let i: number = end; i < this.list.length; i++) {
+                canv.fillRect(i * this.blockWidth + 1, canvHeight, this.blockWidth - 2, -1 * this.list[i] * this.blockHeight);
+            }
+        }
+
     }
 
     start(count: number): void {
@@ -218,45 +246,53 @@ class Mergesort extends BaseSort {
      * time : O(list.length)
      * space : O(list.length)
      */
-    private merge(i0: number, e0: number, i1: number, e1: number): void {
+    private async merge(i0: number, e0: number, i1: number, e1: number): Promise<void> {
+
+
         // out of space array 
         let res :Array<number> = [];
 
         let orig : number = i0;
 
-        while (i0 < e1 && i1 < e1) {
+        while (i0 <= e0 && i1 <= e1) {
+            await this.delay(5);
+            this.render(orig, e1, i0, i1, false);
             if (this.list[i0] < this.list[i1]) {
                 res.push(this.list[i0++]);
             } else {
                 res.push(this.list[i1++]);
             }
         }
-        while(i0 < e0)
+        while(i0 <= e0)
         {
             res.push(this.list[i0++]);
         }
-        while(i1 < e1)
+        while(i1 <= e1)
         {
             res.push(this.list[i1++]);
         }
 
         // copy values
-        for (let i = orig; i < res.length; i++) {
+        for (let i = 0; i < res.length; i++) {
             this.list[orig + i] = res[i];
         }
     }
 
-    internMergesort(begin : number, end : number) : void{
+
+    async internMergesort(begin : number, end : number) : Promise<void>{
         if (begin == end) {
             return;
         }
         let pivot : number = begin + Math.floor((end - begin) / 2.);
-        this.merge(begin, pivot, pivot+1, end);
-
+        await this.internMergesort(begin, pivot);
+        await this.internMergesort(pivot+1, end);
+        await this.merge(begin, pivot, pivot+1, end);
     }
 
-    sort(): void {
-        this.internMergesort(0, this.list.length);
+    async sort(): Promise<void> {
+        await this.internMergesort(0, this.list.length - 1);
+        this.render(0, 0, 0, 0, true);
+        this.enableButtons();
     }
 
 }
@@ -282,13 +318,18 @@ function testBubblesort(): void {
     // let btn1 : HTMLButtonElement = document.getElementById('buttons').children[0];
     // btn1.disabled = true;
     let b: Bubblesort = new Bubblesort(25);
-    b.printList();
+    // b.printList();
     b.sort();
 }
 function testBogosort(): void {
     let b: Bogosort = new Bogosort(8);
-    b.printList();
+    // b.printList();
     b.sort();
+}
+function testMergesort(): void {
+    let m: Mergesort = new Mergesort(400);
+    // m.printList();
+    m.sort();
 }
 
 function testCanvas() :void {

@@ -1,5 +1,5 @@
 body {
-    background-color: lightgray;
+    background-color: black;
 }
 
 #dCanv {
@@ -8,5 +8,5 @@ body {
 
 canvas {
     align-self: center;
-    background-color: lightblue;
+    background-color: black;
 }
