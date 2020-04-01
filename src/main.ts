@@ -192,6 +192,9 @@ class Bogosort extends BaseSort {
 
 }
 
+/**
+ * Initialize canvas, runs once at start
+ */
 function init() {
     let canvElem = <HTMLCanvasElement> document.getElementById('canv');
     canvHeight = canvElem.height;
