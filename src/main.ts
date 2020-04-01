@@ -215,7 +215,7 @@ class Mergesort extends BaseSort {
             for (let i: number = 0; i < begin; i++) {
                 canv.fillRect(i * this.blockWidth + 1, canvHeight, this.blockWidth - 2, -1 * this.list[i] * this.blockHeight);
             }
-            for (let i: number = begin; i < end; i++) {
+            for (let i: number = begin; i <= end; i++) {
                 if ( i == i0 || i == i1) {
                     canv.fillStyle = "#0000ff";
                 } else {
@@ -224,7 +224,7 @@ class Mergesort extends BaseSort {
                 canv.fillRect(i * this.blockWidth + 1, canvHeight, this.blockWidth - 2, -1 * this.list[i] * this.blockHeight);
             }
             canv.fillStyle = "#ff0000";
-            for (let i: number = end; i < this.list.length; i++) {
+            for (let i: number = end+1; i < this.list.length; i++) {
                 canv.fillRect(i * this.blockWidth + 1, canvHeight, this.blockWidth - 2, -1 * this.list[i] * this.blockHeight);
             }
         }
